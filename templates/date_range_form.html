@@ -1,0 +1,29 @@
+<form action="/api/v1.0/date_range" autocomplete="on" method="POST">
+    <h1>Search By Start and End Date</h1>
+    <p>Please input the desired date range below and then click submit.</p>
+    <p><b>Start Date:</b> {yyyy-mm-dd}</p>
+    <input 
+        name="start" 
+        placeholder="2010-01-01"
+    >
+    <br/>
+    <p><b>End Date:</b> {yyyy-mm-dd}</p>
+    <input 
+        name="end" 
+        placeholder="2017-08-23"
+    >
+    <br/>
+    <input type="submit">
+    <br/>
+    <br/>
+    <h2>Alternative Method</h2>
+    <p>The same results can be achieved by supplying a <b>start</b> and <b>end</b> date in the URL.
+    <br/>
+    <b>Example:</b><a href=http://127.0.0.1:5000/api/v1.0/2017-07-01/2017-08-01>"http://127.0.0.1:5000/api/v1.0/2017-07-01/2017-08-01"</a> will query for observations made between July 01 and August 01 (inclusive) in 2017.
+    <br/>
+    <br/>
+    If <b>no end date</b> is provided, the end date is set to the last day with a record (August 23, 2017).
+    <br/>
+    <b>Example:</b><a href=http://127.0.0.1:5000/api/v1.0/2017-07-01>"http://127.0.0.1:5000/api/v1.0/2017-07-01"</a> will query for observations made between July 01 and August 23 in 2017. 
+    </p>
+</form>
