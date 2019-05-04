@@ -34,6 +34,7 @@ max_date= str(max_date_query.__dict__['date'])
 app= Flask(__name__)
 
 
+# Root
 @app.route("/")
 def root():
     print("Request made to Root")
@@ -47,7 +48,7 @@ def root():
         f"<a href=\"http://127.0.0.1:5000/api/v1.0/date_range\" target=\"_blank\">Date Range<br/></a>"
     )
 
-
+# Precipitation
 @app.route("/api/v1.0/precipitation")
 def prcp():
     print("Request made to Prcp")
@@ -62,7 +63,7 @@ def prcp():
 
     return jsonify(prcp_list)
 
-
+# Stations
 @app.route("/api/v1.0/stations")
 def station():
     print("Request made to Station")
@@ -72,14 +73,14 @@ def station():
 
     return jsonify(station_list)
 
-
+# TOBS
 @app.route("/api/v1.0/tobs")
 def tobs():
     print("Request made to Tobs")
     session= Session(engine)
     results= (session
                 .query(Measurement.date,Measurement.tobs)
-                .filter(Measurement.date >= min_date)
+                .filter(Measurement.date >= '2016-08-23')
                 .filter(Measurement.date <= max_date)
                 .all())
     
@@ -91,12 +92,14 @@ def tobs():
 
     return jsonify(tobs_list)
 
-
+# Select Date Range
+## Render HTML Form
 @app.route("/api/v1.0/date_range")
 def date_range_render():
     print("Request made to Date_range_render")
     return render_template("date_range_form.html")
 
+## Retrieve info from Form and return JSON
 @app.route("/api/v1.0/date_range", methods=["POST"])
 def date_range_post():
     print("Request made to Date_range_post")
@@ -122,16 +125,15 @@ def date_range_post():
         .all()
         )
 
-    return (
-        f"<h1>Minimum, Average, and Maximum Temperature for Date Range:</h1>"
-        f"<h2>{start} through {end}</h2>"
-        f"<b>Min Temp: </b>{results[0][0]}<br/>"
-        "<b>Avg Temp: </b>"+"{:.2f}".format(results[0][1])+"<br/>"
-        f"<b>Max Temp: </b>{results[0][2]}<br/>"
-    )
+    date_range_dict= {
+        "Min Temp": results[0][0],
+        "Avg Temp": float("{:.2f}".format(results[0][1])),
+        "Max Temp": results[0][2]
+    }
 
+    return jsonify(date_range_dict)
 
-
+#Accept only Start given through URL and return JSON
 @app.route("/api/v1.0/<start>")
 def date_range_start_manual_url(start):
     print("Request made to Date_range_start_manual_url")
@@ -151,13 +153,13 @@ def date_range_start_manual_url(start):
         .all()
         )
 
-    return (
-        f"<h1>Minimum, Average, and Maximum Temperature for Date Range:</h1>"
-        f"<h2>{start} through {end}</h2>"
-        f"<b>Min Temp: </b>{results[0][0]}<br/>"
-        "<b>Avg Temp: </b>"+"{:.2f}".format(results[0][1])+"<br/>"
-        f"<b>Max Temp: </b>{results[0][2]}<br/>"
-    )
+    date_range_dict= {
+        "Min Temp": results[0][0],
+        "Avg Temp": float("{:.2f}".format(results[0][1])),
+        "Max Temp": results[0][2]
+    }
+
+    return jsonify(date_range_dict)
 
 
 @app.route("/api/v1.0/<start>/<end>")
@@ -177,13 +179,13 @@ def date_range_start_and_end_manual_url(start,end):
         .all()
         )
 
-    return (
-        f"<h1>Minimum, Average, and Maximum Temperature for Date Range:</h1>"
-        f"<h2>{start} through {end}</h2>"
-        f"<b>Min Temp: </b>{results[0][0]}<br/>"
-        "<b>Avg Temp: </b>"+"{:.2f}".format(results[0][1])+"<br/>"
-        f"<b>Max Temp: </b>{results[0][2]}<br/>"
-    )
+    date_range_dict= {
+        "Min Temp": results[0][0],
+        "Avg Temp": float("{:.2f}".format(results[0][1])),
+        "Max Temp": results[0][2]
+    }
+
+    return jsonify(date_range_dict)
 
 
 if __name__ == '__main__':
